@@ -9,5 +9,20 @@ class Product(models.Model):
 	timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
-def __unicode__(self):
-	return self.title
+	def __unicode__(self):
+		return self.title
+
+
+class ProductImage(models.Model):
+	product = models.ForeignKey(Product)
+	description = models.CharField(max_length=3000, null=True, blank=True)
+	image = models.ImageField(upload_to='/product/images')
+	timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
+	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+	def __unicode__(self):
+		return str(self.product.title) + " " + str(self.image)
+
+
+
+
