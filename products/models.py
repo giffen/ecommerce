@@ -6,6 +6,7 @@ class Product(models.Model):
 	description = models.CharField(max_length=3000, null=True, blank=True)
 	price = models.DecimalField(max_digits=1000, decimal_places=2, null=True, blank=True)
 	slug = models.SlugField()
+	active = models.BooleanField(default=True)
 	timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
