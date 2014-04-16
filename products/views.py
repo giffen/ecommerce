@@ -1,7 +1,7 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response, RequestContext, get_object_or_404
 
-from .models import Product
+from .models import Product, ProductImage
 
 def all_products(request):
 	products = Product.objects.filter(active=True)
