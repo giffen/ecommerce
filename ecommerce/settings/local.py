@@ -32,6 +32,7 @@ INSTALLED_APPS = (
     'south',
     'products',
     'contact',
+    'cart',
 )
 
 # Database
