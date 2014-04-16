@@ -9,5 +9,6 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('products.views',
-    url(r'$', 'all_products', name="products"),
+    url(r'^$', 'all_products', name="products"),
+    url(r'^(?P<slug>.*)/$','single_product'),
 )
