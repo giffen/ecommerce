@@ -10,5 +10,6 @@ admin.autodiscover()
 
 urlpatterns = patterns('cart.views',
     url(r'^add$', 'add_to_cart'),
+    url(r'^view$', 'view', name='view_cart'),
     
 )
