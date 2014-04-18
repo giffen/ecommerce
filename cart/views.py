@@ -6,7 +6,7 @@ from .models import Cart, CartItem
 from .forms import ProductQtyForm
 
 def add_to_cart(request):
-	request.session.set_expiry(3000)
+	request.session.set_expiry(0)
 	try:
 		cart_id = request.session['cart_id']
 	except Exception:
@@ -31,14 +31,14 @@ def add_to_cart(request):
 			except:
 				cart = None
 
-			new_cart, created = Cart.objects.get_or_create(cart=cart, product=product)
+			new_cart, created = CartItem.objects.get_or_create(cart=cart, product=product)
 			new_cart.quantity = product_quantity
 			new_cart.save()
 
 			if created:
 				print "Created!"
 
-			return HttpResponseRedirect('/products/')
+			return HttpResponseRedirect('/cart/')
 		return HttpResponseRedirect('/contact/')
 	
 	else:
@@ -46,6 +46,7 @@ def add_to_cart(request):
 
 
 def view(request):
+	# request.session.set_expiry(30)
 	try:
 		cart_id = request.session['cart_id']
 		cart = Cart.objects.get(id=cart_id)
@@ -57,6 +58,8 @@ def view(request):
 
 	if cart and cart.active:
 		cart = cart
+
+	request.session['cart_items'] = len(cart.cartitem_set.all())
 
 	return render_to_response('cart/view.html', locals(), context_instance=RequestContext(request))
 
