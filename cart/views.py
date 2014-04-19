@@ -5,6 +5,9 @@ from products.models import Product
 from .models import Cart, CartItem
 from .forms import ProductQtyForm
 
+import stripe
+stripe.api_key = 'sk_test_0hjKwnrysWtUmhFd8lAEtQEE'
+
 def add_to_cart(request):
 	request.session.set_expiry(0)
 	try:
@@ -71,5 +74,24 @@ def view(request):
 
 	return render_to_response('cart/view.html', locals(), context_instance=RequestContext(request))
 
+def checkout(request):
+	try:
+		cart_id = request.session['cart_id']
+		cart = Cart.objects.get(id=cart_id)
+	except:
+		cart = False
 
+	amount = int(cart.total) * 100
+
+	if request.method == 'POST':
+		token = request.POST['stripeToken']
+
+		stripe.Charge.create(
+			amount = amount,
+			currency = "USD",
+			card = token,
+			description = "Payment for Cart"
+		)
+
+	return render_to_response('cart/checkout.html', locals(), context_instance=RequestContext(request))	
 
