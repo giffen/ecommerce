@@ -5,9 +5,15 @@ from django.shortcuts import render, render_to_response, RequestContext, Http404
 from django.contrib.auth.decorators import login_required
 
 from profiles.models import Profile
+from profiles.forms import AddressForm
 from products.models import Product
+from orders.models import Order
+
+from orders.custom import id_generator
+
 from .models import Cart, CartItem
 from .forms import ProductQtyForm
+
 
 import stripe
 stripe.api_key = 'sk_test_0hjKwnrysWtUmhFd8lAEtQEE'
@@ -112,7 +118,18 @@ def checkout(request):
 	except:
 		pass
 
+	new_number = id_generator()
+
+	new_order, created = Order.objects.get_or_create(cart=cart, user=request.user)
+	if created:
+		new_order.order_id = str(new_number[:2]) + str(new_order.cart.id) + str(new_number[3:])
+		new_order.status = 'Started'
+		new_order.save()
+
+	address_form = AddressForm(request.POST or None)
+
 	if request.method == 'POST':
+		address_form = AddressForm(request.POST)
 		token = request.POST['stripeToken']
 		profile = request.user.get_profile()
 
@@ -122,6 +139,9 @@ def checkout(request):
 			card = token,
 			description = "Payment for Cart"
 		)
+		if address_form.is_valid():
+			form = address_form.save(commit=False)
+			print form
 
 	return render_to_response('cart/checkout.html', locals(), context_instance=RequestContext(request))	
 

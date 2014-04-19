@@ -11,7 +11,9 @@ class OrderAdmin(admin.ModelAdmin):
 			return ['order_id',]
 		return self.readonly_fields
 
+	'''
 	def has_delete_permission(self, request, obj=None):
 		return False
-		
+	'''
+
 admin.site.register(Order, OrderAdmin)
