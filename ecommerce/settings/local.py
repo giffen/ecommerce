@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'contact',
     'cart',
     'profiles',
+    'orders',
 )
 
 ACCOUNT_ACTIVATION_DAYS = 7
