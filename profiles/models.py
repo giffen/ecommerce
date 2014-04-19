@@ -3,12 +3,12 @@ from django.contrib.auth.models import User
 
 class Profile(models.Model):
 	user = models.ForeignKey(User)
-	strip_id = models.CharField(max_length=300)
+	stripe_id = models.CharField(max_length=300)
 	timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
 
 	def __unicode__(self):
-		return self.user
+		return str(self.user)
 
 class Address(models.Model):
 	user = models.ForeignKey(User)

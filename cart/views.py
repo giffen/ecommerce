@@ -1,7 +1,10 @@
+import datetime
+
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response, RequestContext, Http404
 from django.contrib.auth.decorators import login_required
 
+from profiles.models import Profile
 from products.models import Product
 from .models import Cart, CartItem
 from .forms import ProductQtyForm
@@ -43,7 +46,6 @@ def add_to_cart(request):
 				new_cart.save()
 			else:
 				pass
-			
 
 			if created:
 				print "Created!"
@@ -54,11 +56,27 @@ def add_to_cart(request):
 	else:
 		raise Http404
 
+def add_stripe(user):
+	profile, created = Profile.objects.get_or_create(user=user)
+	if len(profile.stripe_id) > 1:
+		print "Exists!"
+		pass
+	else:
+		new_customer = stripe.Customer.create(
+			email = user.email,
+			description = "Added to stripe on %s" %(datetime.datetime.now())
+		)
+		profile.stripe_id = new_customer.id
+		profile.save()
+
+	return profile.stripe_id
+
 def view(request):
 	# request.session.set_expiry(30)
 	try:
 		cart_id = request.session['cart_id']
 		cart = Cart.objects.get(id=cart_id)
+		request.session['cart_items'] = len(cart.cartitem_set.all())
 	except:
 		cart = False
 
@@ -71,8 +89,11 @@ def view(request):
 		for item in cart.cartitem_set.all():
 			cart.total += item.total
 			cart.save()
-
-		request.session['cart_items'] = len(cart.cartitem_set.all())
+	
+	try:
+		stripe_id = add_stripe(request.user)	
+	except:
+		pass
 
 	return render_to_response('cart/view.html', locals(), context_instance=RequestContext(request))
 
@@ -86,8 +107,14 @@ def checkout(request):
 
 	amount = int(cart.total) * 100
 
+	try:
+		stripe_id = add_stripe(request.user)	
+	except:
+		pass
+
 	if request.method == 'POST':
 		token = request.POST['stripeToken']
+		profile = request.user.get_profile()
 
 		stripe.Charge.create(
 			amount = amount,

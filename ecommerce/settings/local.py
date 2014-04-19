@@ -47,6 +47,7 @@ INSTALLED_APPS = (
 )
 
 ACCOUNT_ACTIVATION_DAYS = 7
+AUTH_PROFILE_MODULE = 'profiles.profile'
 
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
