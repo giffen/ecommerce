@@ -32,8 +32,12 @@ def add_to_cart(request):
 				cart = None
 
 			new_cart, created = CartItem.objects.get_or_create(cart=cart, product=product)
-			new_cart.quantity = product_quantity
-			new_cart.save()
+			if new_cart.quantity > 0:
+				new_cart.quantity = product_quantity
+				new_cart.total = int(new_cart.quantity) * new_cart.product.price
+				new_cart.save()
+			else:
+				pass
 
 			if created:
 				print "Created!"
@@ -58,6 +62,10 @@ def view(request):
 
 	if cart and cart.active:
 		cart = cart
+		cart.total = 0
+		for item in cart.cartitem_set.all():
+			cart.total += item.total
+			cart.save()
 
 	request.session['cart_items'] = len(cart.cartitem_set.all())
 
