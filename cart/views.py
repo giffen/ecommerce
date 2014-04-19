@@ -1,5 +1,6 @@
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, render_to_response, RequestContext, Http404
+from django.contrib.auth.decorators import login_required
 
 from products.models import Product
 from .models import Cart, CartItem
@@ -35,19 +36,15 @@ def add_to_cart(request):
 				cart = None
 
 			new_cart, created = CartItem.objects.get_or_create(cart=cart, product=product)
-			#print product_quantity, new_cart.quantity
-			'''
-			if new_cart.quantity > 0:
+						
+			if product_quantity > 0:
 				new_cart.quantity = product_quantity
 				new_cart.total = int(new_cart.quantity) * new_cart.product.price
 				new_cart.save()
 			else:
 				pass
-			'''
-			new_cart.quantity = product_quantity
-			new_cart.total = int(new_cart.quantity) * new_cart.product.price
-			new_cart.save()
 			
+
 			if created:
 				print "Created!"
 
@@ -56,7 +53,6 @@ def add_to_cart(request):
 	
 	else:
 		raise Http404
-
 
 def view(request):
 	# request.session.set_expiry(30)
@@ -76,10 +72,11 @@ def view(request):
 			cart.total += item.total
 			cart.save()
 
-	request.session['cart_items'] = len(cart.cartitem_set.all())
+		request.session['cart_items'] = len(cart.cartitem_set.all())
 
 	return render_to_response('cart/view.html', locals(), context_instance=RequestContext(request))
 
+@login_required
 def checkout(request):
 	try:
 		cart_id = request.session['cart_id']
