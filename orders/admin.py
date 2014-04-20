@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Order
+from .models import Order, ShippingStatus
 
 class OrderAdmin(admin.ModelAdmin):
 	class Meta:
@@ -17,3 +17,10 @@ class OrderAdmin(admin.ModelAdmin):
 	'''
 
 admin.site.register(Order, OrderAdmin)
+
+
+class ShippingStatusAdmin(admin.ModelAdmin):
+	class Meta:
+		model = ShippingStatus
+
+admin.site.register(ShippingStatus, ShippingStatusAdmin)

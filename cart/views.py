@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from profiles.models import Profile
 from profiles.forms import AddressForm
 from products.models import Product
-from orders.models import Order
+from orders.models import Order, ShippingStatus
 
 from orders.custom import id_generator
 
@@ -171,6 +171,9 @@ def checkout(request):
 				new_order.cc_four = new_card.last4
 				new_order.address = form
 				new_order.save()
+				# Create Shipping Status Entry
+				add_shipping = ShippingStatus(order=new_order)
+				add_shipping.save()
 				# destroy cart
 				cart.user = request.user
 				cart.active = False
@@ -178,7 +181,7 @@ def checkout(request):
 				# request.session.flush()
 				del request.session['cart_id']
 				del request.session['cart_items']
-				return HttpResponseRedirect('/products/')
+				return HttpResponseRedirect('/orders/')
 
 	return render_to_response('cart/checkout.html', locals(), context_instance=RequestContext(request))	
 
