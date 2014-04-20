@@ -1,5 +1,12 @@
 from django.db import models
 
+class ProductManager(models.Manager):
+	def all(self):
+		return super(ProductManager, self).filter(active=True).exclude(price=None).exclude(price=None)
+
+	def custom_all(self):
+		return super(ProductManager, self).filter(active=True).exclude(price=None).exclude(price=None).exclude(description='')
+
 class Product(models.Model):
 	title = models.CharField(max_length=220)
 	description = models.CharField(max_length=3000, null=True, blank=True)
@@ -8,6 +15,8 @@ class Product(models.Model):
 	active = models.BooleanField(default=True)
 	timestamp = models.DateTimeField(auto_now=False, auto_now_add=True)
 	updated = models.DateTimeField(auto_now=True, auto_now_add=False)
+
+	objects = ProductManager()
 
 	def __unicode__(self):
 		return self.title

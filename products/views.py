@@ -5,7 +5,7 @@ from cart.forms import ProductQtyForm
 from .models import Product
 
 def all_products(request):
-	products = Product.objects.filter(active=True)
+	products = Product.objects.all()
 	return render_to_response('products/all.html', locals(), context_instance=RequestContext(request))
 
 def single_product(request, slug):
