@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^contact/', 'contact.views.contact_us', name='contact_us'),
     url(r'^$', 'contact.views.home', name='new_home'),
     url(r'^checkout/', 'cart.views.checkout', name='checkout'),
+    url(r'^search/', 'products.views.search', name='search')
 )
 
 if settings.DEBUG:

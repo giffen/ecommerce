@@ -13,3 +13,48 @@ def single_product(request, slug):
 	product = get_object_or_404(Product, slug = slug)
 	return render_to_response('products/single.html', locals(), context_instance=RequestContext(request))
 
+def search(request):
+	try:
+		q = request.GET.get('q','')
+	except:
+		q = False
+
+	if q:
+		k = q.split()
+		if len(k) >= 2:
+			products = []
+			for i in k:
+				all_products = Product.objects.filter(title__icontains=i).distinct()
+				for product in all_products:
+					if product not in products:
+						products.append(product)
+
+		else:
+			products = Product.objects.filter(title__icontains=q)
+
+	return render_to_response('products/search.html', locals(), context_instance=RequestContext(request))
+
+'''
+Basic search example
+
+def search(request):
+try:
+	q = request.GET.get('q','')
+except:
+	q = False
+
+if q:
+	k = q.split()
+	if len(k) >= 2:
+		products = []
+		for i in k:
+			all_products = Product.objects.filter(title__icontains=i).distinct()
+			for product in all_products:
+				if product not in products:
+					products.append(product)
+
+	else:
+		products = Product.objects.filter(title__icontains=q)
+
+return render_to_response('products/search.html', locals(), context_instance=RequestContext(request))
+'''
