@@ -1,4 +1,6 @@
 """
+Made with Coding For Entrepreneurs, http://www.CodingForEntrepreneurs.com
+
 Django settings for ecommerce project.
 
 For more information on this file, see
